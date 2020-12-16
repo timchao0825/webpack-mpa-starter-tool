@@ -20,6 +20,24 @@ module.exports = merge(common, {
   module: {
     rules: [
       {
+        // handle pug template
+        test: /\.pug$/,
+        use: [
+          {
+            loader: 'html-loader',
+            options: {
+              minimize: false,
+            },
+          },
+          {
+            loader: 'pug-loader',
+            options: {
+              pretty: true,
+            },
+          },
+        ],
+      },
+      {
         // handle js
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
