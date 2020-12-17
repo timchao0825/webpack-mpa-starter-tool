@@ -13,7 +13,7 @@ module.exports = merge(common, {
     overlay: {
       warnings: true,
       errors: true,
-    }, // show compiler error
+    },
     host: '127.0.0.1',
     port: 3000,
   },
@@ -30,7 +30,7 @@ module.exports = merge(common, {
             },
           },
           {
-            loader: 'pug-loader',
+            loader: 'pug-html-loader',
             options: {
               pretty: true,
             },

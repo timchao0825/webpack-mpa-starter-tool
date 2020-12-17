@@ -1,74 +1,47 @@
 const path = require('path');
-let HtmlWebpackPlugin = require('html-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const glob = require('glob');
 const globby = require('globby');
-
-const root_directory = path.join(__dirname, '..');
-const src_directory = path.join(root_directory, 'src');
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+let HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 const initMpa = () => {
   const chunkConfig = {};
   const htmlPlugins = [];
-
-  const chunkFiles = globby.sync(path.join(__dirname, '../src/page/*/index.js'));
+  const chunkFiles = globby.sync(path.join(__dirname, '../src/page/*.pug'));
   chunkFiles.forEach((chunkFile) => {
-    const match = chunkFile.match(/page\/\w+\/index.js/)[0];
-    const chunkName = match.split('/')[1];
-    chunkConfig[chunkName] = path.join(__dirname, '../src', match);
-    const templatePath = path.join(__dirname, '../src/page/' + chunkName + '/index.pug');
-
+    const fileName = path.basename(chunkFile, '.pug');
+    console.log('file name ==>', fileName);
     htmlPlugins.push(
       new HtmlWebpackPlugin({
-        template: path.join(__dirname, '../src/page/' + chunkName + '/index.pug'),
-        filename: chunkName + '.html',
+        template: path.join(__dirname, `../src/page/${fileName}.pug`),
+        filename: fileName + '.html',
         inject: true,
         chunks: ['index'],
-        minify: {
-          sortAttributes: true,
-          collapseWhitespace: false,
-          collapseBooleanAttributes: true,
-          removeComments: true,
-        },
+        minify: false,
       })
     );
   });
-
   return {
     chunkConfig,
     htmlPlugins,
   };
 };
+// initMpa();
 const { chunkConfig, htmlPlugins } = initMpa();
 module.exports = {
-  // context: path.resolve(__dirname, '../src'),
-  entry: chunkConfig,
-  // entry: {
-  //   index: '../src/main.js',
-  // },
+  context: path.resolve(__dirname, '../src'),
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, '../src'),
+    },
+  },
+  entry: '../src/main.js',
   output: {
     path: path.resolve(__dirname, '../dist'),
     filename: '../dist/js/[name].[chunkhash].js',
   },
-  plugins: [...htmlPlugins, new CleanWebpackPlugin()],
-  resolve: {
-    modules: [path.resolve('node_modules'), 'node_modules'],
-    extensions: [
-      '.js',
-      '.jsx',
-      '.css',
-      '.scss',
-      '.sass',
-      '.ttf',
-      '.otf',
-      '.woff',
-      '.eot',
-      '.woff2',
-      '.png',
-      '.jpg',
-      '.gif',
-      '.jpeg',
-    ],
-  },
+  plugins: [new CleanWebpackPlugin(), ...htmlPlugins, new CopyPlugin([{ from: 'assets', to: 'assets' }])],
   performance: {
     hints: false,
   },

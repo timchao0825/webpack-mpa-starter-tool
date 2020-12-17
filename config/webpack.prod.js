@@ -24,7 +24,7 @@ module.exports = merge(common, {
             },
           },
           {
-            loader: 'pug-loader',
+            loader: 'pug-html-loader',
             options: {
               pretty: true,
             },
@@ -89,7 +89,6 @@ module.exports = merge(common, {
             loader: 'file-loader',
             options: {
               name: '[contenthash].[ext]',
-              // outputPath: '../dist/assets/images'
               outputPath: 'assets/images',
             },
           },
