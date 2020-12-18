@@ -2,19 +2,20 @@ const path = require('path');
 const merge = require('webpack-merge');
 const common = require('./webpack.common.js');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-
 module.exports = merge(common, {
   mode: 'development',
   devtool: 'inline-source-map',
+  watch: true,
+  watchOptions: {
+    aggregateTimeout: 400,
+  },
   devServer: {
-    historyApiFallback: true,
+    watchContentBase: true,
     contentBase: path.join(__dirname, '../dist'),
-    compress: true,
     overlay: {
       warnings: true,
       errors: true,
     },
-    host: '127.0.0.1',
     port: 3000,
   },
   module: {
@@ -95,6 +96,7 @@ module.exports = merge(common, {
             loader: 'file-loader',
             options: {
               name: '[name].[ext]',
+              outputPath: 'assets/images',
             },
           },
         ],
@@ -116,8 +118,8 @@ module.exports = merge(common, {
   },
   plugins: [
     new MiniCssExtractPlugin({
-      filename: 'css/[name].css',
-      chunkFilename: 'css/[id].css',
+      filename: 'css/[name].[hash].css',
+      chunkFilename: 'css/[id].[hash].css',
     }),
   ],
 }); /* end module exports */
